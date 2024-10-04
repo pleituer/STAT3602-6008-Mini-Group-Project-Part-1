@@ -1,4 +1,4 @@
-methods/__pycache__
 tests/__pycache__
-utils/__pycache__
+tests/methods/__pycache__
+tests/utils/__pycache__
 __pycache__

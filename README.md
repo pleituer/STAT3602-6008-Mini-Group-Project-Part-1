@@ -13,18 +13,18 @@ Note `specific_requirements.txt` included the specific versions of the packages 
 pip install -r specific_requirements.txt 
 ```
 
-### `utils/dataset.py`
+### `src/utils/dataset.py`
 
 Contains the definition of the `Dataset` class, just a wrapper around all the data provided in the lecture.
 
-### `utils/evaluate.py`
+### `src/utils/evaluate.py`
 
 Records the prior/posterior for each $t = 0, 1, \ldots, T$.
 
-### `methods/`
+### `src/methods/`
 
-Stores the python implementation of each method for testing, suggested to just implement the prior and posterior function, see `methods/lecture.py` for reference.
+Stores the python implementation of each method for testing, suggested to just implement the prior and posterior function, see `src/methods/lecture.py` for reference.
 
-### `tests/`
+### `src/`
 
-Stores the testing files (in `ipynb` notebook format), feel free to create subfolders for each method, see `tests/lecture.ipynb` for reference.
+Stores the testing files (in `ipynb` notebook format), feel free to create subfolders for each method, see `src/lecture.ipynb` for reference.
