@@ -1,0 +1,40 @@
+\documentclass[10pt, a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{float}
+
+\usepackage{bbm}
+
+\usepackage[bottom=0.5cm, right=1.5cm, left=1.5cm, top=1.5cm]{geometry}
+
+\title{Idea 1: Varying $\theta_{Frogs}$}
+\author{Frogs}
+
+\begin{document}
+    \maketitle
+
+    \section{Modelling and Data}
+
+    \subsection{Modelling}
+    \begin{itemize}
+        \item $\theta_{Frogs}^{(0)} \sim \mathrm{Po}(\lambda)$: initial number of frogs
+        \item $\theta_{Frogs}^{(t)} = \theta_{Frogs}^{(t-1)} + R^{(t)}$: number of frogs at time $t$, $R^{(t)} \sim F_{r}$ is a random variable, can be Geometric, Possion, etc, with parameter $r$
+        \item $\theta_{Love} \sim \mathrm{Geo}(p)$: true love (0 means don't want love, 1 means congwen, rest means frog number $\theta_{Love}$)
+        \item $\theta_p = \theta_3 \sim \mathrm{U}(0,1)$: $\Pr(\text{reply}|\text{is true love})$
+        \item Each Frogs have probability $p_{send}$ to send letter, and they will only send one letter
+        \item Congwen will send a letter in sats and suns
+    \end{itemize}
+
+    \subsection{Data}
+    \begin{itemize}
+        \item $t = 0, \ldots, T$: time $t$
+        \item $m_t \geq 0$: number of letters from congwen at time $t$
+        \item $n_t \geq 0$: number of letters from other frogs at time $t$
+        \item $Z_1, Z_2, \ldots, Z_{m_t} \in \{0,1\}$: whether the congwen's letter is replied 
+        \item $X_1, X_2, \ldots, X_{n_t} \in \{0,1\}$: whether the other frog's letter is replied
+    \end{itemize}
+
+\end{document}

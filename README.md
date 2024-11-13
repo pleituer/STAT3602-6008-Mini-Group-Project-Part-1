@@ -44,10 +44,14 @@ Stores the testing files (in `ipynb` notebook format), feel free to create subfo
 - $\theta_{Frogs} = \theta_1 \sim \mathrm{Po}(10)$: number of frogs
 - $\theta_{Love} = \theta_2 \in \{-1, 0, \ldots, \theta_1\}$, $F(\theta_{Love}) = 0.5 \;\text{if}\; \theta_{Love} = -1 \;\text{else}\; \frac{0.5}{\theta_{Frogs+1}}$: true love (-1 means no true love, 0 means congwen, rest means frog number $\theta_{Love}$)
 - $\theta_p = \theta_3 \sim \mathrm{U}(0,1)$: $\Pr(\text{reply}|\text{is true love})$
+- Each Frogs have probability 0.1 to send letter, and they will only send one letter
+- Congwen will send a letter in sats and suns
 
 #### Idea 1: Varying $\theta_{Frogs}$
 
 - $\theta_{Frogs}^{(0)} \sim \mathrm{Po}(\lambda)$: initial number of frogs
 - $\theta_{Frogs}^{(t)} = \theta_{Frogs}^{(t-1)} + R^{(t)}$: number of frogs at time $t$, $R^{(t)} \sim F_{r}$ is a random variable, can be Geometric, Possion, etc, with parameter $r$
-- $\theta_{Love} \sim \mathrm{Geo}(p)$: true love (0 means don't want love, 1 means congwen, rest means frog number $\theta_{Love}$)
+- $\theta_{Love} \sim \mathrm{Geo}(p)$ (Can change dist): true love, (0 means don't want love, 1 means congwen, rest means frog number $\theta_{Love}$), assume first send letter $=$ more attractive
 - $\theta_p = \theta_3 \sim \mathrm{U}(0,1)$: $\Pr(\text{reply}|\text{is true love})$
+- Each Frogs have probability $p_{send}$ to send letter, and they will only send one letter
+- Congwen will send a letter in sats and suns
