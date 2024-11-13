@@ -22,19 +22,62 @@
     \begin{itemize}
         \item $\theta_{Frogs}^{(0)} \sim \mathrm{Po}(\lambda)$: initial number of frogs
         \item $\theta_{Frogs}^{(t)} = \theta_{Frogs}^{(t-1)} + R^{(t)}$: number of frogs at time $t$, $R^{(t)} \sim F_{r}$ is a random variable, can be Geometric, Possion, etc, with parameter $r$
-        \item $\theta_{Love} \sim \mathrm{Geo}(p)$: true love (0 means don't want love, 1 means congwen, rest means frog number $\theta_{Love}$)
-        \item $\theta_p = \theta_3 \sim \mathrm{U}(0,1)$: $\Pr(\text{reply}|\text{is true love})$
+        \item $\theta_{Love}$, where $\theta_{Love}+1 \sim \mathrm{Geo}(p_{Love})$ (Can change dist): true love, (0 means don't want love, 1 means congwen, rest means frog number $\theta_{Love}-1$), assume first send letter $=$ more attractive
+        \item $\theta_p \sim \mathrm{U}(0,1)$: $\Pr(\text{reply}|\text{is true love})$
         \item Each Frogs have probability $p_{send}$ to send letter, and they will only send one letter
         \item Congwen will send a letter in sats and suns
     \end{itemize}
 
-    \subsection{Data}
+    \subsection{Data $x_t$}
     \begin{itemize}
         \item $t = 0, \ldots, T$: time $t$
         \item $m_t \geq 0$: number of letters from congwen at time $t$
         \item $n_t \geq 0$: number of letters from other frogs at time $t$
         \item $Z_1, Z_2, \ldots, Z_{m_t} \in \{0,1\}$: whether the congwen's letter is replied 
         \item $X_1, X_2, \ldots, X_{n_t} \in \{0,1\}$: whether the other frog's letter is replied
+        \item $Z_t = X_t = 0$
+        \item Truely random variables are $n_t$, $X_t$, $Z_t$
     \end{itemize}
+
+    \section{Computations}
+    \begin{align*}
+        f(Z_1 = \ldots = Z_{m_t} = 0|m_t, \theta)
+        &= (1-\theta_p)^{m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}} \\
+        f(X_1 = \ldots = X_{n_t} = 0|n_t, \theta)
+        &= (1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}}} \\
+        f(n_t|\theta) 
+        &= \binom{\theta_{Frogs}^{(t)}}{n_t}p_{send}^{n_t}(1-p_{send})^{\theta_{Frogs}^{(t)}-n_t} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\
+        f(x_t|\theta)
+        &= \frac{\theta_{Frogs}^{(t)}!}{n_t!(\theta_{Frogs}^{(t)}-n_t)!}p_{send}^{n_t}(1-p_{send})^{\theta_{Frogs}^{(t)}-n_t} \\&\qquad\cdot (1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\
+        \theta_{Frogs}^{(t)} 
+        &= \theta_{Frogs}^{(0)} + \sum_{i=1}^{t} R^{(t)} \sim \mathrm{Po}(\lambda+tr) & R^{(t)} \sim \mathrm{Po}(r) \\
+        \pi(\theta)
+        &= \frac{e^{-(\lambda+tr)}(\lambda+tr)^{\theta_{Frogs}^{(t)}}}{\theta_{Frogs}^{(t)}!}p_{Love}(1-p_{Love})^{\theta_{Love}} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}}
+    \end{align*}
+
+    \begin{align*}
+        &\pi(\theta|x_t) \\
+        &\propto f(x_t|\theta)\pi(\theta) \\
+        &= \frac{\theta_{Frogs}^{(t)}!}{n_t!(\theta_{Frogs}^{(t)}-n_t)!}p_{send}^{n_t}(1-p_{send})^{\theta_{Frogs}^{(t)}-n_t} \\&\qquad\cdot (1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\&\qquad\cdot \frac{e^{-(\lambda+tr)}(\lambda+tr)^{\theta_{Frogs}^{(t)}}}{\theta_{Frogs}^{(t)}!}p_{Love}(1-p_{Love})^{\theta_{Love}} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}} \\
+        &\propto \frac{((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)}}(1-p_{Love})^{\theta_{Love}}}{(\theta_{Frogs}^{(t)}-n_t)!}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}}\mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}} \\
+        &\sum_{\theta_{Frogs}^{(t)}=0}^{\infty} \frac{((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)}}}{(\theta_{Frogs}^{(t)}-n_t)!}\mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\
+        &= ((1-p_{send})(\lambda+tr))^{n_t}\sum_{x=0}^{\infty} \frac{((1-p_{send})(\lambda+tr))^x}{x!} \\
+        &= e^{(1-p_{send})(\lambda+tr)}((1-p_{send})(\lambda+tr))^{n_t} \\
+        &\int_{\mathbb{R}}\sum_{\theta_{Love}=0}^{\infty} (1-p_{Love})^{\theta_{Love}}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}} \mathbbm{1}_{\{\theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}}d\theta_p \\
+        &= \int_0^1\sum_{\theta_{Love}=0}^{\infty}(1-p_{Love})^{\theta_{Love}}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}} d\theta_p \\
+        &= \int_0^1 1 + (1-\theta_p)^{m_t}(1-p_{Love}) + (1-\theta_p)\sum_{\theta_{Love}=2}^{n_t+1}(1-p_{Love})^{\theta_{Love}} + \sum_{\theta_{Love}=n_t+2}^{\infty} (1-p_{Love})^{\theta_{Love}} d\theta_p \\
+        &= \int_0^1 1 + (1-\theta_p)^{m_t}(1-p_{Love}) + \frac{(1-\theta_p)(1-p_{Love})^2}{p_{Love}}(1- (1-p_{Love})^{n_t}) + \frac{(1-p_{Love})^{n_t+2}}{p_{Love}} d\theta_p \\
+        &= \int_0^1 1 + (1-\theta_p)^{m_t}(1-p_{Love}) + \frac{(1-\theta_p)(1-p_{Love})^2}{p_{Love}} + \frac{\theta_p(1-p_{Love})^{n_t+2}}{p_{Love}} d\theta_p \\
+        &= 1 + \frac{1-p_{Love}}{m_t+1} + \frac{(1-p_{Love})^2 + (1-p_{Love})^{n_t+2}}{2p_{Love}} 
+    \end{align*}
+    \begin{align*}
+        C(x_t) 
+        &= \int_{\mathbb{R}}\sum_{\theta_{Love}=0}^{\infty}\sum_{\theta_{Frogs}^{(t)}=0}^{\infty}\frac{((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)}}(1-p_{Love})^{\theta_{Love}}}{(\theta_{Frogs}^{(t)}-n_t)!}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}}\\&\qquad\cdot\mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}}d\theta_p \\
+        &= e^{(1-p_{send})(\lambda+tr)}((1-p_{send})(\lambda+tr))^{n_t} \left\{1 + \frac{1-p_{Love}}{m_t+1} + \frac{(1-p_{Love})^2 + (1-p_{Love})^{n_t+2}}{2p_{Love}}\right\} \\
+        \pi(\theta|x_t)
+        &= \frac{((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)}}(1-p_{Love})^{\theta_{Love}}}{C(x_t)(\theta_{Frogs}^{(t)}-n_t)!}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}}\mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}}
+    \end{align*}
+
+    Interesting: $$(\theta_{Frogs}^{(t)} - n_t)|x_t \sim \mathrm{Po}((1-p_{send})(\lambda+tr))$$
 
 \end{document}
