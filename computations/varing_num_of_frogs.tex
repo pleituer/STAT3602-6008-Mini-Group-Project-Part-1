@@ -41,25 +41,27 @@
 
     \section{Computations}
     \begin{align*}
-        f(Z_1 = \ldots = Z_{m_t} = 0|m_t, \theta)
+        f(Z_1 = \ldots = Z_{m_t} = 0|m_t, \theta_{Frogs}^{(t)}, \theta_{Love}, \theta_p)
         &= (1-\theta_p)^{m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}} \\
-        f(X_1 = \ldots = X_{n_t} = 0|n_t, \theta)
+        f(X_1 = \ldots = X_{n_t} = 0|n_t, \theta_{Frogs}^{(t)}, \theta_{Love}, \theta_p)
         &= (1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}}} \\
-        f(n_t|\theta) 
+        f(n_t|\theta_{Frogs}^{(t)}, \theta_{Love}, \theta_p) 
         &= \binom{\theta_{Frogs}^{(t)}}{n_t}p_{send}^{n_t}(1-p_{send})^{\theta_{Frogs}^{(t)}-n_t} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\
-        f(x_t|\theta)
+        f(x_t|\theta_{Frogs}^{(t)}, \theta_{Love}, \theta_p)
         &= \frac{\theta_{Frogs}^{(t)}!}{n_t!(\theta_{Frogs}^{(t)}-n_t)!}p_{send}^{n_t}(1-p_{send})^{\theta_{Frogs}^{(t)}-n_t} \\&\qquad\cdot (1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\
         \theta_{Frogs}^{(t)} 
-        &= \theta_{Frogs}^{(0)} + \sum_{i=1}^{t} R^{(t)} \sim \mathrm{Po}(\lambda+tr) & R^{(t)} \sim \mathrm{Po}(r) \\
-        \pi(\theta)
+        &= \theta_{Frogs}^{(0)} + \sum_{i=1}^{t} R^{(t)} \sim \mathrm{Po}(\lambda+tr) \qquad\qquad R^{(t)} \sim \mathrm{Po}(r) \\
+        \pi(\theta_{Frogs}^{(0)}, \theta_{Love}, \theta_p)
+        &= \frac{e^{-\lambda}\lambda^{\theta_{Frogs}^{(0)}}}{\theta_{Frogs}^{(0)}!}p_{Love}(1-p_{Love})^{\theta_{Love}} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}} \\
+        \pi(\theta_{Frogs}^{(t)}, \theta_{Love}, \theta_p)
         &= \frac{e^{-(\lambda+tr)}(\lambda+tr)^{\theta_{Frogs}^{(t)}}}{\theta_{Frogs}^{(t)}!}p_{Love}(1-p_{Love})^{\theta_{Love}} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}}
     \end{align*}
 
     \begin{align*}
-        &\pi(\theta|x_t) \\
+        &\pi(\theta_{Frogs}^{(t)}, \theta_{Love}, \theta_p|x_t) \\
         &\propto f(x_t|\theta)\pi(\theta) \\
         &= \frac{\theta_{Frogs}^{(t)}!}{n_t!(\theta_{Frogs}^{(t)}-n_t)!}p_{send}^{n_t}(1-p_{send})^{\theta_{Frogs}^{(t)}-n_t} \\&\qquad\cdot (1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\&\qquad\cdot \frac{e^{-(\lambda+tr)}(\lambda+tr)^{\theta_{Frogs}^{(t)}}}{\theta_{Frogs}^{(t)}!}p_{Love}(1-p_{Love})^{\theta_{Love}} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}} \\
-        &\propto \frac{((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)}}(1-p_{Love})^{\theta_{Love}}}{(\theta_{Frogs}^{(t)}-n_t)!}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}}\mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}} \\
+        &\propto \frac{((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)}}}{(\theta_{Frogs}^{(t)}-n_t)!}(1-p_{Love})^{\theta_{Love}}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}}\mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}} \\
         &\sum_{\theta_{Frogs}^{(t)}=0}^{\infty} \frac{((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)}}}{(\theta_{Frogs}^{(t)}-n_t)!}\mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\
         &= ((1-p_{send})(\lambda+tr))^{n_t}\sum_{x=0}^{\infty} \frac{((1-p_{send})(\lambda+tr))^x}{x!} \\
         &= e^{(1-p_{send})(\lambda+tr)}((1-p_{send})(\lambda+tr))^{n_t} \\
@@ -68,16 +70,24 @@
         &= \int_0^1 1 + (1-\theta_p)^{m_t}(1-p_{Love}) + (1-\theta_p)\sum_{\theta_{Love}=2}^{n_t+1}(1-p_{Love})^{\theta_{Love}} + \sum_{\theta_{Love}=n_t+2}^{\infty} (1-p_{Love})^{\theta_{Love}} d\theta_p \\
         &= \int_0^1 1 + (1-\theta_p)^{m_t}(1-p_{Love}) + \frac{(1-\theta_p)(1-p_{Love})^2}{p_{Love}}(1- (1-p_{Love})^{n_t}) + \frac{(1-p_{Love})^{n_t+2}}{p_{Love}} d\theta_p \\
         &= \int_0^1 1 + (1-\theta_p)^{m_t}(1-p_{Love}) + \frac{(1-\theta_p)(1-p_{Love})^2}{p_{Love}} + \frac{\theta_p(1-p_{Love})^{n_t+2}}{p_{Love}} d\theta_p \\
-        &= 1 + \frac{1-p_{Love}}{m_t+1} + \frac{(1-p_{Love})^2 + (1-p_{Love})^{n_t+2}}{2p_{Love}} 
-    \end{align*}
-    \begin{align*}
-        C(x_t) 
+        &= 1 + \frac{1-p_{Love}}{m_t+1} + \frac{(1-p_{Love})^2 + (1-p_{Love})^{n_t+2}}{2p_{Love}} \\
+        &C(x_t) \\
         &= \int_{\mathbb{R}}\sum_{\theta_{Love}=0}^{\infty}\sum_{\theta_{Frogs}^{(t)}=0}^{\infty}\frac{((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)}}(1-p_{Love})^{\theta_{Love}}}{(\theta_{Frogs}^{(t)}-n_t)!}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}}\\&\qquad\cdot\mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}}d\theta_p \\
         &= e^{(1-p_{send})(\lambda+tr)}((1-p_{send})(\lambda+tr))^{n_t} \left\{1 + \frac{1-p_{Love}}{m_t+1} + \frac{(1-p_{Love})^2 + (1-p_{Love})^{n_t+2}}{2p_{Love}}\right\} \\
-        \pi(\theta|x_t)
-        &= \frac{((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)}}(1-p_{Love})^{\theta_{Love}}}{C(x_t)(\theta_{Frogs}^{(t)}-n_t)!}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}}\mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}}
+        &\pi(\theta_{Frogs}^{(t)},\theta_{Love}, \theta_p|x_t) \\
+        &= \frac{((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)}}}{C(x_t)(\theta_{Frogs}^{(t)}-n_t)!}(1-p_{Love})^{\theta_{Love}}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}}\mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}} \\
+        &\pi(\theta_{Frogs}^{(0)}|\theta_{Frogs}^{(t)}) \\
+        &= \frac{\pi(\theta_{Frogs}^{(t)}|\theta_{Frogs}^{(0)})\pi(\theta_{Frogs}^{(0)})}{\pi(\theta_{Frogs}^{(t)})} \\
+        &= \frac{e^{-tr}(tr)^{\theta_{Frogs}^{(t)}-\theta_{Frogs}^{(0)}}}{(\theta_{Frogs}^{(t)}-\theta_{Frogs}^{(0)})!}\cdot \frac{e^{-\lambda}\lambda^{\theta_{Frogs}^{(0)}}}{\theta_{Frogs}^{(0)}!} \cdot \frac{\theta_{Frogs}^{(t)}!}{e^{-(\lambda+tr)}(\lambda+tr)^{\theta_{Frogs}^{(t)}}} \\
+        &= \frac{\theta_{Frogs}^{(t)}!}{\theta_{Frogs}^{(0)}!(\theta_{Frogs}^{(t)}-\theta_{Frogs}^{(0)})!} \left(\frac{\lambda}{\lambda+tr}\right)^{\theta_{Frogs}^{(0)}}\left(\frac{tr}{\lambda+tr}\right)^{\theta_{Frogs}^{(t)}-\theta_{Frogs}^{(0)}} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq\theta_{Frogs}^{(0)}\geq0\}}\\
+    \end{align*}
+    \begin{align*}
+        &\pi(\theta_{Frogs}^{(0)},\theta_{Love}, \theta_p|x_t) \\
+        &= \sum_{\theta_{Frogs}^{(t)}=0}^{\infty}\pi(\theta_{Frogs}^{(0)}|\theta_{Frogs}^{(t)})\pi(\theta_{Frogs}^{(t)},\theta_{Love}, \theta_p|x_t) \\
+        &= \frac{(\lambda/tr)^{\theta_{Frog}^{(0)}}}{C(x_t)\theta_{Frogs}^{(0)}!}(1-p_{Love})^{\theta_{Love}}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}}\mathbbm{1}_{\{\theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}} \\&\quad\times \sum_{\theta_{Frogs}^{(t)}=\max\{n_t, \theta_{Frogs}^{(0)}\}}^{\infty} \frac{\theta_{Frogs}^{(t)}!((1-p_{send})tr)^{\theta_{Frogs}^{(t)}}}{(\theta_{Frogs}^{(t)}-\theta_{Frogs}^{(0)})!(\theta_{Frogs}^{(t)}-n_t)!} \mathbbm{1}_{\{\theta_{Frogs}^{(0)}\geq 0\}} \\
+        &\approx \frac{(\lambda/tr)^{\theta_{Frog}^{(0)}}}{C(x_t)\theta_{Frogs}^{(0)}!}(1-p_{Love})^{\theta_{Love}}(1-\theta_p)^{\mathbbm{1}_{\{2\leq\theta_{Love}\leq n_t+1\}} + m_t\mathbbm{1}_{\{\theta_{Love} = 1\}}}\mathbbm{1}_{\{\theta_{Frogs}^{(0)}\geq 0, \theta_{Love}\geq 0, 0 \leq \theta_p \leq 1\}} \\&\quad\times \sum_{i=1}^{n} \frac{(P_i+\max\{n_t, \theta_{Frogs}^{(0)}\})!}{(P_i+|n_t-\theta_{Frogs}^{(0)}|)!}((1-p_{send})tr)^{\max\{n_t, \theta_{Frogs}^{(0)}\}}e^{(1-p_{send})tr} \qquad P_{1:n} \sim \mathrm{Po}((1-p_{seed})tr) \\
     \end{align*}
 
-    Interesting: $$(\theta_{Frogs}^{(t)} - n_t)|x_t \sim \mathrm{Po}((1-p_{send})(\lambda+tr))$$
+    Interesting: $$(\theta_{Frogs}^{(t)} - n_t)|x_t \sim \mathrm{Po}((1-p_{send})(\lambda+tr))$$ $$\theta_{Frogs}^{(0)}|\theta_{Frogs}^{(t)} \sim \mathrm{Bin}\left(\theta_{Frogs}^{(t)}, \frac{\lambda}{\lambda+tr}\right)$$
 
 \end{document}
