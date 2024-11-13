@@ -13,18 +13,41 @@ Note `specific_requirements.txt` included the specific versions of the packages 
 pip install -r specific_requirements.txt 
 ```
 
-### `src/utils/dataset.py`
+### Structure
+
+#### `src/utils/dataset.py`
 
 Contains the definition of the `Dataset` class, just a wrapper around all the data provided in the lecture.
 
-### `src/utils/evaluate.py`
+#### `src/utils/evaluate.py`
 
 Records the prior/posterior for each $t = 0, 1, \ldots, T$.
 
-### `src/methods/`
+#### `src/methods/`
 
 Stores the python implementation of each method for testing, suggested to just implement the prior and posterior function, see `src/methods/lecture.py` for reference.
 
-### `src/`
+#### `src/`
 
 Stores the testing files (in `ipynb` notebook format), feel free to create subfolders for each method, see `src/lecture.ipynb` for reference.
+
+### Methods
+
+#### Accessible data
+
+- $t = 0, \ldots, T$: time $t$
+- $m_t \geq 0$: number of letters from congwen at time $t$
+- $n_t \geq 0$: number of letters from other frogs at time $t$
+
+#### Lecture
+
+- $\theta_{Frogs} = \theta_1 \sim \mathrm{Po}(10)$: number of frogs
+- $\theta_{Love} = \theta_2 \in \{-1, 0, \ldots, \theta_1\}$, $F(\theta_{Love}) = 0.5 \;\text{if}\; \theta_{Love} = -1 \;\text{else}\; \frac{0.5}{\theta_{Frogs+1}}$: true love (-1 means no true love, 0 means congwen, rest means frog number $\theta_{Love}$)
+- $\theta_p = \theta_3 \sim \mathrm{U}(0,1)$: $\Pr(\text{reply}|\text{is true love})$
+
+#### Idea 1: Varying $\theta_{Frogs}$
+
+- $\theta_{Frogs}^{(0)} \sim \mathrm{Po}(\lambda)$: initial number of frogs
+- $\theta_{Frogs}^{(t)} = \theta_{Frogs}^{(t-1)} + R^{(t)}$: number of frogs at time $t$, $R^{(t)} \sim F_{r}$ is a random variable, can be Geometric, Possion, etc, with parameter $r$
+- $\theta_{Love} \sim \mathrm{Geo}(p)$: true love (0 means don't want love, 1 means congwen, rest means frog number $\theta_{Love}$)
+- $\theta_p = \theta_3 \sim \mathrm{U}(0,1)$: $\Pr(\text{reply}|\text{is true love})$
