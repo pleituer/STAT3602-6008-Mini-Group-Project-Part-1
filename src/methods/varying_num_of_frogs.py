@@ -28,7 +28,11 @@ def varying_frogs_posterior(mt, nt, t):
         _b = pow(1 - p_love, theta_love) * np.where(1 <= theta_love and theta_love <= nt+1, np.where(theta_love == 1, pow(1-theta_p, mt), 1-theta_p), 1) 
         theta_frogs_t_samples = np.random.poisson((1 - p_send)*t*r, _sample_size)
         max_nt_theta_frogs_0 = np.maximum(nt, theta_frogs_0)
-        _d = (factorial(theta_frogs_t_samples + max_nt_theta_frogs_0) * pow((1-p_send)*t*r, max_nt_theta_frogs_0) / factorial(theta_frogs_t_samples + np.abs(nt - theta_frogs_0))).mean()
+        if max_nt_theta_frogs_0 == np.abs(nt-theta_frogs_0): _fact = np.ones(_sample_size, dtype=np.longlong)
+        else: 
+            _fact = np.prod(np.linspace(theta_frogs_t_samples+np.abs(nt-theta_frogs_0)+1, theta_frogs_t_samples+max_nt_theta_frogs_0, num=max_nt_theta_frogs_0-np.abs(nt-theta_frogs_0)).astype(np.longlong), axis=0)
+            #_fact = factorial(theta_frogs_t_samples + max_nt_theta_frogs_0) / factorial(theta_frogs_t_samples + np.abs(nt-theta_frogs_0))
+        _d = (pow((1-p_send)*t*r, max_nt_theta_frogs_0) * _fact).mean()
         return _a * _b * _d / _C
     
     return poseterior

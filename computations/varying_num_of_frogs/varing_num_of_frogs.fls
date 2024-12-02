@@ -1,8 +1,8 @@
-PWD d:/AA/OneDrive - The University of Hong Kong - Connect/Courses/Year 3 Sem 1/STAT3602/gp1/computations
+PWD d:/AA/OneDrive - The University of Hong Kong - Connect/Courses/Year 3 Sem 1/STAT3602/gp1/computations/varying_num_of_frogs
 INPUT c:/texlive/2023/texmf.cnf
 INPUT c:/texlive/2023/texmf-dist/web2c/texmf.cnf
 INPUT c:/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt
-INPUT d:/AA/OneDrive - The University of Hong Kong - Connect/Courses/Year 3 Sem 1/STAT3602/gp1/computations/varing_num_of_frogs.tex
+INPUT d:/AA/OneDrive - The University of Hong Kong - Connect/Courses/Year 3 Sem 1/STAT3602/gp1/computations/varying_num_of_frogs/varing_num_of_frogs.tex
 OUTPUT varing_num_of_frogs.log
 INPUT c:/texlive/2023/texmf-dist/tex/latex/base/article.cls
 INPUT c:/texlive/2023/texmf-dist/tex/latex/base/article.cls

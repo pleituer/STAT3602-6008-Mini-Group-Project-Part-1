@@ -1,0 +1,100 @@
+\documentclass[10pt, a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{float}
+
+\usepackage{bbm}
+
+\usepackage[bottom=0.5cm, right=1.5cm, left=1.5cm, top=1cm]{geometry}
+
+\title{Idea 2 (Improve on 1): Generalized Stephen's model}
+\author{Frogs}
+
+\begin{document}
+    \maketitle
+
+    \section{Modelling and Data}
+
+    \subsection{Modelling}
+    \begin{itemize}
+        \item $\theta_{Frogs}^{(0)} \sim \mathrm{Po}(\lambda)$: initial number of frogs
+        \item $\theta_{Frogs}^{(t)} = \theta_{Frogs}^{(t-1)} + R^{(t)}$: number of frogs at time $t$, $R^{(t)} \sim F_{r}$ is a random variable, can be Geometric, Possion, etc, with parameter $r$
+        \item $\theta_{Love}^{(i)} \sim \mathrm{U}(0, 1)$ is "likeness" of Frog $i$, or Congwen if $i=0$, or None of above is $i = -1$, this "likeness" encodes information of how much Peony loves the frog, $\theta_{Love}^{(-1)} \sim \pi$.
+        \item $\Pr(\text{reply Frog } i) = f_{reply}(\theta_{Love}, \theta_{p}, i)$, which can be some function containing its own parameters $\theta_p$.
+        \item Each Frogs have probability $p_{send}$ to send letter, and they will only send one letter
+        \item Congwen will send a letter in sats and suns
+        \item Stephen's model will be $\theta_3 = \theta_p$, with $\theta_2 = \arg\max_i \theta_{Love}^{(i)}$, $f_{reply}(\theta_{Love}, \theta_p, i) = \theta_3\mathbbm{1}_{\{i = \theta_2\}}$, with $r=0$.
+    \end{itemize}
+
+    \subsection{Data $x_t$}
+    \begin{itemize}
+        \item $t = 0, \ldots, T$: time $t$
+        \item $m_t \geq 0$: number of letters from congwen at time $t$
+        \item $n_t \geq 0$: number of letters from other frogs at time $t$
+        \item $Z_1, Z_2, \ldots, Z_{m_t} \in \{0,1\}$: whether the congwen's letter is replied 
+        \item $X_1, X_2, \ldots, X_{n_t} \in \{0,1\}$: whether the other frog's letter is replied
+        \item $Z_t = X_t = 0$
+        \item Truely random variables are $n_t$, $X_t$, $Z_t$
+    \end{itemize}
+
+    \section{Computations}
+    \begin{align*}
+        f(Z_1 = \ldots = Z_{m_t} = 0|n_t, \theta_{Love}, \theta_p)
+        &= (1-f_{reply}(\theta_{Love}, \theta_{p}, 0))^{m_t} \\
+        f(X_1 = \ldots = X_{n_t} = 0|n_t, \theta_{Love}, \theta_p)
+        &= \prod_{i=1}^{n_t} (1-f_{reply}(\theta_{Love}, \theta_{p}, i)) \\
+        f(n_t|\theta_{Frogs}^{(t)}) 
+        &= \binom{\theta_{Frogs}^{(t)}}{n_t}p_{send}^{n_t}(1-p_{send})^{\theta_{Frogs}^{(t)}-n_t} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\
+        f(x_t|\theta_{Frogs}^{(t)}, \theta_{Love}, \theta_p)
+        &= \frac{\theta_{Frogs}^{(t)}!}{n_t!(\theta_{Frogs}^{(t)}-n_t)!}p_{send}^{n_t}(1-p_{send})^{\theta_{Frogs}^{(t)}-n_t} \\&\qquad\cdot(1-f_{reply}(\theta_{Love}, \theta_{p}, 0))^{m_t}\prod_{i=1}^{n_t} (1-f_{reply}(\theta_{Love}, \theta_{p}, i)) \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\
+        \theta_{Frogs}^{(t)} 
+        &= \theta_{Frogs}^{(0)} + \sum_{i=1}^{t} R^{(t)} \sim \mathrm{Po}(\lambda+tr) \qquad\qquad R^{(t)} \sim \mathrm{Po}(r) \\
+        \pi(\theta_{Frogs}^{(0)}, \theta_{Love}, \theta_p)
+        &= \frac{e^{-\lambda}\lambda^{\theta_{Frogs}^{(0)}}}{\theta_{Frogs}^{(0)}!}\pi(\theta_p)\pi(\theta_{Love}) \mathbbm{1}_{\{\theta_{Frogs}^{(t)} \geq 0\}} \\
+        \pi(\theta_{Frogs}^{(t)}, \theta_{Love}, \theta_p)
+        &= \frac{e^{-(\lambda+tr)}(\lambda+tr)^{\theta_{Frogs}^{(t)}}}{\theta_{Frogs}^{(t)}!}\pi(\theta_p)\pi(\theta_{Love}^{(-1)}) \mathbbm{1}_{\{\theta_{Frogs}^{(t)} \geq 0, 1\geq\theta_{Love}^{(i)}\geq 0, \dim(\theta_{Love}) = \theta_{Frogs}^{(t)}+2\}}
+    \end{align*}
+
+    \begin{align*}
+        &\pi(\theta_{Frogs}^{(t)}, \theta_{Love}, \theta_p|x_t) \\
+        &\propto f(x_t|\theta)\pi(\theta) \\
+        &\propto \frac{\theta_{Frogs}^{(t)}!}{(\theta_{Frogs}^{(t)} - n_t)!}(1-p_{send})^{\theta_{Frogs}^{(t)}-n_t} (1-f_{reply}(\theta_{Love}, \theta_{p}, 0))^{m_t}\prod_{i=1}^{n_t} (1-f_{reply}(\theta_{Love}, \theta_{p}, i)) \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\&\qquad\cdot \frac{e^{-(\lambda+tr)}(\lambda+tr)^{\theta_{Frogs}^{(t)}}}{\theta_{Frogs}^{(t)}!}\pi(\theta_p)\pi(\theta_{Love}^{(-1)}) \mathbbm{1}_{\{\theta_{Frogs}^{(t)} \geq 0, 1\geq\theta_{Love}^{(i)}\geq 0, \dim(\theta_{Love}) = \theta_{Frogs}^{(t)}+2\}} \\
+        &\propto \frac{((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)} - n_t}}{(\theta_{Frogs}^{(t)}-n_t)!} \pi(\theta_p)\pi(\theta_{Love}^{(-1)}) (1-f_{reply}(\theta_{Love}, \theta_{p}, 0))^{m_t}\\&\qquad\cdot\prod_{i=1}^{n_t} (1-f_{reply}(\theta_{Love}, \theta_{p}, i)) \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t, 1\geq\theta_{Love}^{(i)}\geq 0, \dim(\theta_{Love}) = \theta_{Frogs}^{(t)}+2\}} \\
+        &\pi(\theta_{Frogs}^{(t)}, \theta_{Love}, \theta_p|x_t) \\
+        &= \frac{e^{-(1-p_{send})(\lambda+tr)}((1-p_{send})(\lambda+tr))^{\theta_{Frogs}^{(t)} - n_t}}{(\theta_{Frogs}^{(t)}-n_t)!} \cdot\frac{1}{C(x_t)}\pi(\theta_p)\pi(\theta_{Love}^{(-1)}) (1-f_{reply}(\theta_{Love}, \theta_{p}, 0))^{m_t}\\&\qquad\cdot\prod_{i=1}^{n_t} (1-f_{reply}(\theta_{Love}, \theta_{p}, i)) \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t, 1\geq\theta_{Love}^{(i)}\geq 0, \dim(\theta_{Love}) = \theta_{Frogs}^{(t)}+2\}} \\
+        &\pi(\theta_{Frogs}^{(0)}|\theta_{Frogs}^{(t)}) \\
+        &= \frac{\pi(\theta_{Frogs}^{(t)}|\theta_{Frogs}^{(0)})\pi(\theta_{Frogs}^{(0)})}{\pi(\theta_{Frogs}^{(t)})} \\
+        &= \frac{e^{-tr}(tr)^{\theta_{Frogs}^{(t)}-\theta_{Frogs}^{(0)}}}{(\theta_{Frogs}^{(t)}-\theta_{Frogs}^{(0)})!}\cdot \frac{e^{-\lambda}\lambda^{\theta_{Frogs}^{(0)}}}{\theta_{Frogs}^{(0)}!} \cdot \frac{\theta_{Frogs}^{(t)}!}{e^{-(\lambda+tr)}(\lambda+tr)^{\theta_{Frogs}^{(t)}}} \\
+        &= \frac{\theta_{Frogs}^{(t)}!}{\theta_{Frogs}^{(0)}!(\theta_{Frogs}^{(t)}-\theta_{Frogs}^{(0)})!} \left(\frac{\lambda}{\lambda+tr}\right)^{\theta_{Frogs}^{(0)}}\left(\frac{tr}{\lambda+tr}\right)^{\theta_{Frogs}^{(t)}-\theta_{Frogs}^{(0)}} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq\theta_{Frogs}^{(0)}\geq0\}}\\
+        &\pi(\theta_{Frogs}^{(0)},\theta_{Love}, \theta_p|x_t) \\
+        &= \sum_{\theta_{Frogs}^{(t)}=0}^{\infty} \pi(\theta_{Frogs}^{(0)}|\theta_{Frogs}^{(t)})\pi(\theta_{Frogs}^{(t)}, \theta_{Love}, \theta_p|x_t) \\
+        &= \frac{e^{-(1-p_{send})(\lambda+tr)}(\lambda/tr)^{\theta_{Frogs}^{(0)}}}{\theta_{Frogs}^{(0)}!((1-p_{send})(\lambda+tr))^{n_t}} \cdot\pi(\theta_p) \mathbbm{1}_{\{\theta_{Frogs}^{(0)}\geq 0, 1\geq\theta_{Love}^{(i)}\geq 0\}} \\&\qquad \times \sum_{\theta_{Frogs}^{(t)}=\max\{n_t, \theta_{Frogs}^{(0)}\}}^{\infty} \frac{\theta_{Frogs}^{(t)}!((1-p_{send})tr)^{\theta_{Frogs}^{(t)}}}{(\theta_{Frogs}^{(t)}-n_t)!(\theta_{Frogs}^{(t)}-\theta_{Frogs}^{(0)})!}\cdot \frac{1}{C(x_t)}\pi(\theta_{Love}^{(-1)})(1-f_{reply}(\theta_{Love}, \theta_{p}, 0))^{m_t}\\&\qquad\qquad\cdot\prod_{i=1}^{n_t} (1-f_{reply}(\theta_{Love}, \theta_{p}, i)) \mathbbm{1}_{\{\dim(\theta_{Love}) = \theta_{Frogs}^{(t)}+2\}} \\
+        &\approx \frac{e^{-(1-p_{send})\lambda}(\lambda/tr)^{\theta_{Frogs}^{(0)}}}{\theta_{Frogs}^{(0)}!((1-p_{send})(\lambda+tr))^{n_t}} \cdot\pi(\theta_p)\mathbbm{1}_{\{\theta_{Frogs}^{(0)}\geq 0, 1\geq\theta_{Love}^{(i)}\geq 0\}} \qquad P_{1:n} \sim \mathrm{Po}((1-p_{send})tr) \\&\qquad \times \sum_{i=1}^n \frac{(P_i+\max\{n_t, \theta_{Frogs}^{(0)}\})!}{(P_i+|n_t-\theta_{Frogs}^{(0)}|)!}((1-p_{send})tr)^{\max\{n_t, \theta_{Frogs}^{(0)}\}}\mathbbm{1}_{\{\dim(\theta_{Love}) = P_i+\max\{n_t, \theta_{Frogs}^{(0)}\}+2\}} \\&\qquad\qquad\cdot\frac{\pi(\theta_{Love}^{(-1)}) (1-f_{reply}(\theta_{Love}, \theta_{p}, 0))^{m_t}}{C(x_t)}\prod_{i=1}^{n_t} (1-f_{reply}(\theta_{Love}, \theta_{p}, i)) \\
+        &= \frac{e^{-(1-p_{send})}(\lambda/tr)^{\theta_{Frogs}^{(0)}}}{\theta_{Frogs}^{(0)}!((1-p_{send})(\lambda+tr))^{n_t}} \cdot\pi(\theta_p)\mathbbm{1}_{\{\theta_{Frogs}^{(0)}\geq 0, 1\geq\theta_{Love}^{(i)}\geq 0\}} \cdot \frac{(\dim(\theta_{Love})-2)!}{(\dim(\theta_{Love})-\min\{n_t,\theta_{Frogs}^{(0)}\}-2)!} \\&\qquad \cdot((1-p_{send})tr)^{\max\{n_t, \theta_{Frogs}^{(0)}\}}\cdot \frac{e^{-(1-p_{send})tr}((1-p_{send})tr)^{\dim(\theta_{Love})-\max\{n_t, \theta_{Frogs}^{(0)}\}-2}}{(\dim(\theta_{Love})-\max\{n_t, \theta_{Frogs}^{(0)}\}-2)!} \\&\qquad\cdot\frac{\pi(\theta_{Love}^{(-1)}) (1-f_{reply}(\theta_{Love}, \theta_{p}, 0))^{m_t}}{C(x_t)}\prod_{i=1}^{n_t} (1-f_{reply}(\theta_{Love}, \theta_{p}, i)) \mathbbm{1}_{\{\dim(\theta_{Love}) -2 \geq \max\{n_t, \theta_{Frogs}^{(0)}\}\}} \\
+    \end{align*}
+    \begin{align*}
+        &\pi(\theta_{Frogs}^{(0)}, \theta_{Love}, \theta_p|x_t) \qquad \text{Stephen's model} \\
+        &= \frac{e^{-(1-p_{send})}\lambda^{\theta_{Frogs}^{(0)}-n_t}}{C(x_t)\theta_{Frogs}^{(0)}!(1-p_{send})^{n_t}}\cdot\frac{(\dim(\theta_{Love})-2)!}{(\dim(\theta_{Love})-\min\{n_t,\theta_{Frogs}^{(0)}\}-2)!} \cdot (\dim(\theta_{Love})-1)(\theta_{Love}^{(-1)})^{\dim(\theta_{Love})-2}(1-p_{send})^{\theta_{Frogs}^{(0)}}\\&\qquad\cdot \left(1-\theta_p\mathbbm{1}_{\{\arg\max_j \theta_{Love}^{(j)}=0\}}\right)^{m_t}\prod_{i=1}^{n_t} \left(1-\theta_p\mathbbm{1}_{\{\arg\max_j \theta_{Love}^{(j)}=i\}}\right)\mathbbm{1}_{\{\theta_{Frogs}^{(0)} = \dim(\theta_{Love})-2 \geq n_t, 1 \geq \theta_{Love}^{(i)}, \theta_p\geq 0\}} \\
+        &= \frac{e^{-(1-p_{send})}(\lambda(1-p_{send}))^{\theta_{Frogs}^{(0)}-n_t}(\theta_{Frogs}^{(0)}+1)(\theta_{Love}^{(-1)})^{\theta_{Frogs}^{(0)}}}{C(x_t)(\theta_{Frogs}^{(0)}-n_t)!}\left(1-\theta_p\right)^{m_t\mathbbm{1}_{\{\arg\max_j \theta_{Love}^{(j)}=0\}}}\\&\qquad\cdot\prod_{i=1}^{n_t} \left(1-\theta_p\right)^{\mathbbm{1}_{\{\arg\max_j \theta_{Love}^{(j)}=i\}}}\mathbbm{1}_{\{\theta_{Frogs}^{(0)} = \dim(\theta_{Love})-2 \geq n_t, 1 \geq \theta_{Love}^{(i)}, \theta_p\geq 0\}} \\
+        &= \frac{e^{-(1-p_{send})}(\lambda(1-p_{send}))^{\theta_{Frogs}^{(0)}-n_t}(\theta_{Frogs}^{(0)}+1)(\theta_{Love}^{(-1)})^{\theta_{Frogs}^{(0)}}}{C(x_t)(\theta_{Frogs}^{(0)}-n_t)!}\\&\qquad\cdot\left(1-\theta_p\right)^{m_t\mathbbm{1}_{\{\arg\max_j \theta_{Love}^{(j)}=0\}}+\mathbbm{1}_{\{1 \leq \arg\max_j \theta_{Love}^{(j)} \leq n_t\}}}\mathbbm{1}_{\{\theta_{Frogs}^{(0)} = \dim(\theta_{Love})-2 \geq n_t, 1 \geq \theta_{Love}^{(i)},\theta_p\geq 0\}} \\ 
+        &\pi(\theta_1, \theta_2, \theta_3|\theta_{Frogs}^{(0)}, \theta_{Love}, \theta_p) \\
+        &= \mathbbm{1}_{\{\theta_1=\theta_{Frogs}^{(0)}, \theta_2=\arg\max_j\theta_{Love}^{(j)}, \theta_3=\theta_p\}} \\
+        &\pi(\theta_{Frogs}^{(0)}, \theta_{Love}, \theta_p, \theta_1, \theta_2, \theta_3|x_t) \\
+        &=\frac{e^{-(1-p_{send})}(\lambda(1-p_{send}))^{\theta_{Frogs}^{(0)}-n_t}(\theta_{Frogs}^{(0)}+1)(\theta_{Love}^{(-1)})^{\theta_{Frogs}^{(0)}}}{C(x_t)(\theta_{Frogs}^{(0)}-n_t)!}\mathbbm{1}_{\{\theta_1=\theta_{Frogs}^{(0)}, \theta_2=\arg\max_j\theta_{Love}^{(j)}, \theta_3=\theta_p\}}\\&\qquad\cdot\left(1-\theta_p\right)^{m_t\mathbbm{1}_{\{\arg\max_j \theta_{Love}^{(j)}=0\}}+\mathbbm{1}_{\{1 \leq \arg\max_j \theta_{Love}^{(j)} \leq n_t\}}}\mathbbm{1}_{\{\theta_{Frogs}^{(0)} = \dim(\theta_{Love})-2 \geq n_t, 1 \geq \theta_{Love}^{(i)},\theta_p\geq 0\}} \\ 
+        &= \frac{e^{-(1-p_{send})}(\lambda(1-p_{send}))^{\theta_1-n_t}(\theta_1+1)(\theta_{Love}^{(-1)})^{\theta_1}}{C(x_t)(\theta_1-n_t)!}\mathbbm{1}_{\{\theta_1=\theta_{Frogs}^{(0)}, \theta_2=\arg\max_j\theta_{Love}^{(j)}, \theta_3=\theta_p\}}\\&\qquad\cdot\left(1-\theta_3\right)^{m_t\mathbbm{1}_{\{\theta_2=0\}}+\mathbbm{1}_{\{1 \leq \theta_2 \leq n_t\}}}\mathbbm{1}_{\{\theta_{Frogs}^{(0)} = \dim(\theta_{Love})-2 \geq n_t, 1 \geq \theta_{Love}^{(i)},\theta_p\geq 0\}} \\ 
+        &\pi(\theta_1, \theta_2, \theta_3|x_t) \\
+        &= \frac{e^{-(1-p_{send})}(\lambda(1-p_{send}))^{\theta_1-n_t}}{C(x_t)(\theta_1-n_t)!}\left(1-\theta_3\right)^{m_t\mathbbm{1}_{\{\theta_2=0\}}+\mathbbm{1}_{\{1 \leq \theta_2 \leq n_t\}}}\mathbbm{1}_{\{\theta_1\geq n_t, \theta_1 \geq \theta_2 \geq -1, 1 \geq \theta_3 \geq 0\}} \\&\qquad\cdot \int_{[0,1]^{\theta_1+2}} (\theta_1+1)(\theta_{Love}^{(-1)})^{\theta_1}\mathbbm{1}_{\{\theta_2=\arg\max_j\theta_{Love}^{(j)}\}} d\theta_{Love} \\ 
+        &= \frac{e^{-(1-p_{send})}(\lambda(1-p_{send}))^{\theta_1-n_t}}{4C(x_t)(\theta_1-n_t)!(\theta_1+1)^{\mathbbm{1}_{\{0\leq\theta_2\leq \theta_1\}}}}\left(1-\theta_3\right)^{m_t\mathbbm{1}_{\{\theta_2=0\}}+\mathbbm{1}_{\{1 \leq \theta_2 \leq n_t\}}}\mathbbm{1}_{\{\theta_1\geq n_t, \theta_1 \geq \theta_2 \geq -1, 1 \geq \theta_3 \geq 0\}} 
+    \end{align*}
+
+\end{document}
+
+%  f(n_t|\theta_{Frogs}^{(0:t)}) 
+% &= \prod_{i=1}^t\binom{\theta_{Frogs}^{(i)}-n_{i-1}}{n_i-n_{i-1}}p_{send}^{n_i}(1-p_{send})^{\theta_{Frogs}^{(t)}-n_i} \mathbbm{1}_{\{\theta_{Frogs}^{(t)}\geq n_t\}} \\
+% \pi(\theta_{Frogs}^{(0:t-1)}|\theta_{Frogs}^{(t)})
+% &= \pi(\theta_{Frogs}^{(0:t-2)}|\theta_{Frogs}^{(t-2)})\pi(\theta_{Frogs}^{(t-2)}|\theta_{Frogs}^{(t-1)}) \\
+% &= \prod_{i=1}^t \frac{\theta_{Frogs}^{(i)}!}{\theta_{Frogs}^{(i-1)}!(\theta_{Frogs}^{(i)} - \theta_{Frogs}^{(i-1)})!}\left(\frac{\lambda}{\lambda+ir}\right)^{\theta_{Frogs}^{(i-1)}}\left(\frac{ir}{\lambda+ir}\right)^{\theta_{Frogs}^{i}-\theta_{Frogs}^{(i-1)}} \\
+% &= \frac{\theta_{Frogs}^{(t)}!}{\theta_{Frogs}^{(0)}!\prod_{i=1}^t(\theta_{Frogs}^{(i)}-\theta_{Frogs}^{(i-1)})!} \left(\frac{\lambda}{r}\right)^{\theta_{Frogs}^{(0)}}\prod_{i=1}^{t-1} \left(\frac{\lambda i/(i+1)}{\lambda + ir}\right)^{\theta_{Frogs}^{(i)}} \\
